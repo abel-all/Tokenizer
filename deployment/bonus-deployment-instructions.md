@@ -1,4 +1,4 @@
-# Deploying Abel42 Token With MultiSign Feature
+# Deploying MultiSignContract ERC-20 Token
 
 ## Prerequisites
 - **MetaMask wallet** connected to **Sepolia Testnet**
@@ -18,5 +18,5 @@
    then click **"Deploy"** and confirm the transaction in MetaMask.  
 
 ## Contract Info
-- **Deployed Address:** `0x000`
+- **Deployed Address:** To be deployed
 - **Network:** Sepolia Testnet

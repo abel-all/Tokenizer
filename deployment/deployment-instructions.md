@@ -16,5 +16,5 @@
    then click **"Deploy"** and confirm the transaction in MetaMask. 
 
 ## Contract Info
-- **Deployed Address:** `0x000`
+- **Deployed Address:** To be deployed
 - **Network:** Sepolia Testnet

@@ -90,7 +90,7 @@ When the contract is deployed:
 
 1. The constructor is called.
 2. The `ERC20` base constructor initializes the name and symbol.
-3. `_mint` mints **1000 ABL42** tokens (in full unit = `1000 * 10^18`) to the deployer's wallet.
+3. `_mint` mints **initialSupply ABL42** tokens (in full unit = `initialSupply * 10^18`) to the deployer's wallet.
 
 ---
 
@@ -126,20 +126,20 @@ You can test this contract using the [Remix IDE](https://remix.ethereum.org):
 2. Ensure the OpenZeppelin library is available (or use the Remix plugin).
 3. Compile with Solidity version ^0.8.0.
 4. Deploy the contract using the JavaScript VM or your wallet.
-5. Use the "balanceOf" function to check that the deployer has `1000 ABL42`.
+5. Use the "balanceOf" function to check that the deployer has `initialSupply ABL42`.
 
 ---
 
 ## Summary
 
-| Item         | Value        |
-|--------------|--------------|
-| Token Name   | Abel42       |
-| Token Symbol | ABL42        |
-| Total Supply | 1000 ABL42   |
-| Decimals     | 18           |
-| Standard     | ERC-20       |
-| Framework    | OpenZeppelin |
+| Item         | Value                |
+|--------------|----------------------|
+| Token Name   | Abel42               |
+| Token Symbol | ABL42                |
+| Total Supply | initialSupply ABL42  |
+| Decimals     | 18                   |
+| Standard     | ERC-20               |
+| Framework    | OpenZeppelin         |
 
 ---
 
