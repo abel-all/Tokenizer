@@ -39,20 +39,17 @@ pragma solidity ^0.8.0;
 
 ```solidity
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.0/contracts/token/ERC20/ERC20.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.0/contracts/access/Ownable.sol";
 ```
 
 - **ERC20.sol**: Standard ERC-20 token implementation from OpenZeppelin
-- **Ownable.sol**: Access control contract providing ownership functionality
 
 ### Contract Declaration
 
 ```solidity
-contract MultiSignContract is ERC20, Ownable {
+contract MultiSignContract is ERC20 {
 ```
 
-- Inherits from both `ERC20` (token functionality) and `Ownable` (access control)
-- Combines token operations with multi-signature security
+- Inherits from `ERC20` (token functionality)
 
 ### State Variables
 
@@ -60,13 +57,20 @@ contract MultiSignContract is ERC20, Ownable {
 uint256 public requiredSignatures;
 mapping(address => bool) public isOwner;
 address[] public owners;
-uint256 public ownerCount;
 ```
 
 - **requiredSignatures**: Minimum number of confirmations needed to execute transactions
 - **isOwner**: Mapping to check if an address is an owner
 - **owners**: Array of all owner addresses
-- **ownerCount**: Total number of owners
+
+### Enum
+
+```solidity
+enum OperationType { TRANSFER, BURN }
+```
+
+- **TRANSFER**: represent transfer transaction
+- **BURN**: represent burn transaction
 
 ### Transaction Structure
 
@@ -74,26 +78,23 @@ uint256 public ownerCount;
 struct Transaction {
     address to;
     uint256 amount;
-    bytes data;
     bool executed;
     uint256 confirmations;
     mapping(address => bool) isConfirmed;
-    string operation;
+    OperationType operation;
 }
 ```
 
 - **to**: Target address for the transaction
 - **amount**: Token amount involved
-- **data**: Additional data (for future extensibility)
 - **executed**: Whether the transaction has been executed
 - **confirmations**: Number of owner confirmations received
 - **isConfirmed**: Mapping of which owners have confirmed
-- **operation**: Type of operation ("transfer" or "burn")
+- **operation**: Type of operation (TRANSFER or BURN)
 
 ### Events
 
 ```solidity
-event RequiredSignaturesChanged(uint256 requiredSignatures);
 event TransactionSubmitted(uint256 indexed transactionId, address indexed submitter);
 event TransactionConfirmed(uint256 indexed transactionId, address indexed owner);
 event TransactionExecuted(uint256 indexed transactionId);

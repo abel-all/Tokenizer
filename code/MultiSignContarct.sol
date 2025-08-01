@@ -22,7 +22,6 @@ contract MultiSignContract is ERC20 {
     mapping(uint256 => Transaction) public transactions;
     uint256 public transactionCount;
     
-    event RequiredSignaturesChanged(uint256 requiredSignatures);
     event TransactionSubmitted(uint256 indexed transactionId, address indexed submitter);
     event TransactionConfirmed(uint256 indexed transactionId, address indexed owner);
     event TransactionExecuted(uint256 indexed transactionId);
