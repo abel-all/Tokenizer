@@ -2,22 +2,21 @@
 pragma solidity ^0.8.0;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.0/contracts/token/ERC20/ERC20.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.0/contracts/access/Ownable.sol";
 
-contract MultiSignContract is ERC20, Ownable {
+contract MultiSignContract is ERC20 {
     uint256 public requiredSignatures;
     mapping(address => bool) public isOwner;
     address[] public owners;
-    uint256 public ownerCount;
     
+    enum OperationType { TRANSFER, BURN }
+
     struct Transaction {
         address to;
         uint256 amount;
-        bytes data;
         bool executed;
         uint256 confirmations;
         mapping(address => bool) isConfirmed;
-        string operation;
+        OperationType operation;
     }
     
     mapping(uint256 => Transaction) public transactions;
@@ -65,8 +64,7 @@ contract MultiSignContract is ERC20, Ownable {
             isOwner[owner] = true;
             owners.push(owner);
         }
-        
-        ownerCount = _owners.length;
+
         requiredSignatures = _requiredSignatures;
         
         _mint(address(this), initialSupply * (10**18));
@@ -75,15 +73,13 @@ contract MultiSignContract is ERC20, Ownable {
     function submitTransaction(
         address _to,
         uint256 _amount,
-        bytes memory _data,
-        string memory _operation
+        OperationType _operation
     ) public onlyOwners returns (uint256) {
         uint256 transactionId = transactionCount;
         
         Transaction storage txn = transactions[transactionId];
         txn.to = _to;
         txn.amount = _amount;
-        txn.data = _data;
         txn.executed = false;
         txn.confirmations = 0;
         txn.operation = _operation;
@@ -123,10 +119,11 @@ contract MultiSignContract is ERC20, Ownable {
         
         txn.executed = true;
         
-        if (keccak256(abi.encodePacked(txn.operation)) == keccak256(abi.encodePacked("transfer"))) {
+        if (txn.operation == OperationType.TRANSFER) {
             _transfer(address(this), txn.to, txn.amount);
-        } else if (keccak256(abi.encodePacked(txn.operation)) == keccak256(abi.encodePacked("burn"))) {
+        } else if (txn.operation == OperationType.BURN) {
             _burn(txn.to, txn.amount);
+        }
         
         emit TransactionExecuted(_transactionId);
     }
@@ -147,11 +144,11 @@ contract MultiSignContract is ERC20, Ownable {
     }
     
     function multisigTransfer(address _to, uint256 _amount) public onlyOwners returns (uint256) {
-        return submitTransaction(_to, _amount, "", "transfer");
+        return submitTransaction(_to, _amount, OperationType.TRANSFER);
     }
 
     function multisigBurn(address _from, uint256 _amount) public onlyOwners returns (uint256) {
-        return submitTransaction(_from, _amount, "", "burn");
+        return submitTransaction(_from, _amount, OperationType.BURN);
     }
     
     function getOwners() public view returns (address[] memory) {
@@ -168,14 +165,13 @@ contract MultiSignContract is ERC20, Ownable {
         returns (
             address to,
             uint256 amount,
-            bytes memory data,
             bool executed,
             uint256 confirmations,
-            string memory operation
+            OperationType operation
         )
     {
         Transaction storage txn = transactions[_transactionId];
-        return (txn.to, txn.amount, txn.data, txn.executed, txn.confirmations, txn.operation);
+        return (txn.to, txn.amount, txn.executed, txn.confirmations, txn.operation);
     }
     
     function isTransactionConfirmed(uint256 _transactionId, address _owner)
